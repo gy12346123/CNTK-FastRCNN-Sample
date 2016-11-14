@@ -1,0 +1,50 @@
+﻿<Controls:MetroWindow x:Class="CNTK_FastRCNN_Sample.MainWindow"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CNTK_FastRCNN_Sample"
+        mc:Ignorable="d"
+        WindowStartupLocation="Manual"
+        NonActiveGlowBrush="#FFAEC9"
+        GlowBrush="{DynamicResource AccentColorBrush}"
+        Title="CNTK-FastRCNN-Sample" Height="600" Width="800">
+    <Controls:MetroWindow.RightWindowCommands>
+        <Controls:WindowCommands>
+            <Button Name="button_Setting" ToolTip="" Click="button_Setting_Click">
+                <StackPanel Orientation="Horizontal">
+                    <Rectangle Width="17"
+                    Height="17"
+                    Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_settings}" />
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                    <TextBlock Margin="4 0 0 0"
+                    VerticalAlignment="Center"
+                    Text="Setting" />
+                </StackPanel>
+            </Button>
+        </Controls:WindowCommands>
+    </Controls:MetroWindow.RightWindowCommands>
+    <Controls:MetroWindow.Flyouts>
+        <Controls:FlyoutsControl Name="flyoutsControl">
+            <Controls:Flyout Header="Setting" Position="Right" Width="400" Theme="Inverse">
+                <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto" >
+                    <StackPanel>
+                        <TextBlock Text="Image load from" FontSize="20" FontWeight="Bold" Margin="10" />
+                        <RadioButton Name="radioButton_Local" GroupName="1" Content="Local" FontSize="15" HorizontalAlignment="Left" Margin="100,0,0,0" IsChecked="True" Click="radioButton_Local_Click" />
+                        <RadioButton Name="radioButton_Net" GroupName="1" Content="Net" FontSize="15" HorizontalAlignment="Left" Margin="250,-20,0,0" Click="radioButton_Net_Click" />
+                        <Button Name="button_LoadLocalFile" Content="LoadFile" Height="25" Width="70" HorizontalAlignment="Left" Margin="100,10,0,0" IsEnabled="True" Style="{StaticResource AccentedSquareButtonStyle}" Click="button_LoadLocalFile_Click" />
+                    </StackPanel>
+                </ScrollViewer>
+            </Controls:Flyout>
+        </Controls:FlyoutsControl>
+    </Controls:MetroWindow.Flyouts>
+    
+    
+    <Grid>
+        <Image Name="Image_Show" />
+    </Grid>
+</Controls:MetroWindow>
