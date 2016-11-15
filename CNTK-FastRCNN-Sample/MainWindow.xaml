@@ -52,7 +52,9 @@
         <CommandBinding Command="{StaticResource NextImage}" CanExecute="NextImage_CommandBinding_CanExecute" Executed="NextImage_CommandBinding_Executed" />
     </Window.CommandBindings>
     <Grid Name="grid_Main">
-        <Image Name="Image_Show" Source="{Binding UIImage}"/>
+        <Image Name="Image_Show" Source="{Binding UIImage}" HorizontalAlignment="Left" VerticalAlignment="Top" MouseMove="Image_Show_MouseMove"/>
+        <Image Name="Image_MouseFocus" Source="{Binding MouseFocusImage}" HorizontalAlignment="Left" VerticalAlignment="Top" MouseMove="Image_MouseFocus_MouseMove" MouseLeftButtonDown="Image_MouseFocus_MouseLeftButtonDown" MouseLeftButtonUp="Image_MouseFocus_MouseLeftButtonUp" />
+        <TextBlock Name="textBlock_Message" Text="{Binding TextMessage}" FontSize="15" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
         <Controls:ProgressRing Name="progressRing_MainWindow" Foreground="{DynamicResource AccentColorBrush}" IsActive="{Binding progressRing_IsActive}" HorizontalAlignment="Center" VerticalAlignment="Center" />
     </Grid>
 </Controls:MetroWindow>

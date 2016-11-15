@@ -27,7 +27,23 @@ namespace CNTK_FastRCNN_Sample
 
         private List<string> localImageFile;
 
-        UIData uiData;
+        public UIData uiData;
+
+        private DrawingGroup mouseFocusGD;
+
+        private Pen mouseFocusPen = new Pen(Brushes.MediumVioletRed, 2d);
+
+        private Pen BboxPen = new Pen(Brushes.Green,2d);
+
+        private Pen drawingBboxNoticePen = new Pen(Brushes.Red, 0d);
+
+        private Rect UIImageActualRect;
+
+        private Point startPoint;
+
+        private Point EndPoint;
+
+        private bool flag_DrawBbox = false;
 
         public MainWindow()
         {
@@ -152,10 +168,46 @@ namespace CNTK_FastRCNN_Sample
                 System.Drawing.Bitmap image = System.Drawing.Bitmap.FromFile(file) as System.Drawing.Bitmap;
                 BitmapSource bitmap = Imaging.CreateBitmapSourceFromBitmap(ref image);
                 uiData.UIImage = bitmap;
+                CallResetMouseFocusImage_Delegate();
                 uiData.progressRing_IsActive = false;
                 image.Dispose();
                 bitmap = null;
             });
+        }
+
+        private void ResetMouseFocusImage()
+        {
+            mouseFocusGD = new DrawingGroup();
+            uiData.MouseFocusImage = new DrawingImage(mouseFocusGD);
+        }
+
+        private delegate void ResetMouseFocusImage_Delegate();
+
+        private void CallResetMouseFocusImage_Delegate()
+        {
+            this.Dispatcher.Invoke(new ResetMouseFocusImage_Delegate(ResetMouseFocusImage));
+        }
+
+        private void DrawMouseFocus(ref Point point)
+        {
+            if (point.X > Image_Show.ActualWidth || point.Y > Image_Show.ActualHeight)
+            {
+                return;
+            }
+            using (DrawingContext DC = mouseFocusGD.Open())
+            {
+                DC.DrawLine(mouseFocusPen, new Point(0d, point.Y), new Point(Image_Show.ActualWidth, point.Y));
+                DC.DrawLine(mouseFocusPen, new Point(point.X, 0d), new Point(point.X, Image_Show.ActualHeight));
+            }
+        }
+
+        private void DrawBbox(ref Point start, ref Point end, ref Pen focusPen, ref Pen noticePen)
+        {
+            using (DrawingContext DC = mouseFocusGD.Open())
+            {
+                DC.DrawRectangle(null, noticePen, UIImageActualRect);
+                DC.DrawRectangle(null, focusPen, new Rect(start,end));
+            }
         }
 
         private void NextImage_CommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -173,6 +225,44 @@ namespace CNTK_FastRCNN_Sample
         private void NextImage_CommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             StartDrawBbox(ref localImageFile);
+        }
+
+        private void Image_Show_MouseMove(object sender, MouseEventArgs e)
+        {
+            Point point = e.GetPosition(Image_Show);
+            if (!flag_DrawBbox)
+            {
+                DrawMouseFocus(ref point);
+            }else
+            {
+                DrawBbox(ref startPoint, ref point, ref mouseFocusPen, ref drawingBboxNoticePen);
+            }
+        }
+
+        private void Image_MouseFocus_MouseMove(object sender, MouseEventArgs e)
+        {
+            Point point = e.GetPosition(Image_Show);
+            if (!flag_DrawBbox)
+            {
+                DrawMouseFocus(ref point);
+            }else
+            {
+                DrawBbox(ref startPoint, ref point, ref mouseFocusPen, ref drawingBboxNoticePen);
+            }
+        }
+
+        private void Image_MouseFocus_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            flag_DrawBbox = true;
+            UIImageActualRect = new Rect(0, 0, Image_Show.ActualWidth, Image_Show.ActualHeight);
+            startPoint = e.GetPosition(Image_Show);
+        }
+
+        private void Image_MouseFocus_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            flag_DrawBbox = false;
+            EndPoint = e.GetPosition(Image_Show);
+            DrawBbox(ref startPoint, ref EndPoint, ref BboxPen, ref drawingBboxNoticePen);
         }
     }
 }

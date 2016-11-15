@@ -9,7 +9,7 @@ using System.Windows.Media.Imaging;
 
 namespace CNTK_FastRCNN_Sample
 {
-    class UIData : INotifyPropertyChanged
+    public class UIData : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -31,6 +31,24 @@ namespace CNTK_FastRCNN_Sample
             }
         }
 
+        private ImageSource _MouseFocusImage;
+
+        public ImageSource MouseFocusImage
+        {
+            get { return _MouseFocusImage; }
+            set
+            {
+                if (_MouseFocusImage != value)
+                {
+                    _MouseFocusImage = value;
+                    if (PropertyChanged != null)
+                    {
+                        PropertyChanged(this, new PropertyChangedEventArgs("MouseFocusImage"));
+                    }
+                }
+            }
+        }
+
         private bool _progressRing_IsActive = false;
 
         public bool progressRing_IsActive
@@ -44,6 +62,24 @@ namespace CNTK_FastRCNN_Sample
                     if (PropertyChanged != null)
                     {
                         PropertyChanged(this, new PropertyChangedEventArgs("progressRing_IsActive"));
+                    }
+                }
+            }
+        }
+
+        private string _TextMessage;
+
+        public string TextMessage
+        {
+            get { return _TextMessage; }
+            set
+            {
+                if (_TextMessage != value)
+                {
+                    _TextMessage = value;
+                    if (PropertyChanged != null)
+                    {
+                        PropertyChanged(this, new PropertyChangedEventArgs("TextMessage"));
                     }
                 }
             }
