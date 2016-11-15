@@ -26,9 +26,19 @@ namespace CNTK_FastRCNN_Sample
         private string localImagePath;
 
         private List<string> localImageFile;
+
+        UIData uiData;
+
         public MainWindow()
         {
             InitializeComponent();
+            uiData = new UIData();
+        }
+
+        private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            grid_Main.DataContext = uiData;
+            //Image_Show.DataContext = uiData;
         }
 
         private System.Windows.Input.ICommand openFirstFlyoutCommand;
@@ -94,12 +104,13 @@ namespace CNTK_FastRCNN_Sample
             }
             localImageFile = new List<string>();
             Task.Factory.StartNew(()=>{
-                getImageFile(localImagePath, ref localImageFile);
+                GetImageFile(localImagePath, ref localImageFile);
+                StartDrawBbox(ref localImageFile);
             });
 
         }
 
-        private void getImageFile(string dir, ref List<string> fileList)
+        private void GetImageFile(string dir, ref List<string> fileList)
         {
             try
             {
@@ -123,6 +134,45 @@ namespace CNTK_FastRCNN_Sample
                 this.ShowMessageAsync("Notice","Find image file error.");
                 return;
             }
+        }
+
+        private void StartDrawBbox(ref List<string> fileList)
+        {
+            if (fileList.Count() > 0)
+            {
+                ShowImage(fileList.First());
+                fileList.RemoveAt(0);
+            }
+        }
+
+        private void ShowImage(string file)
+        {
+            uiData.progressRing_IsActive = true;
+            Task.Factory.StartNew(()=>{
+                System.Drawing.Bitmap image = System.Drawing.Bitmap.FromFile(file) as System.Drawing.Bitmap;
+                BitmapSource bitmap = Imaging.CreateBitmapSourceFromBitmap(ref image);
+                uiData.UIImage = bitmap;
+                uiData.progressRing_IsActive = false;
+                image.Dispose();
+                bitmap = null;
+            });
+        }
+
+        private void NextImage_CommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            if(localImageFile.Count() > 0)
+            {
+                e.CanExecute = true;
+            }else
+            {
+                e.CanExecute = false;
+                this.ShowMessageAsync("Notice","All image has been drawed.");
+            }
+        }
+
+        private void NextImage_CommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            StartDrawBbox(ref localImageFile);
         }
     }
 }

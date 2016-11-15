@@ -106,7 +106,7 @@ namespace CNTK_FastRCNN_Sample
         /// </summary>
         /// <param name="bitmap">Bitmap</param>
         /// <returns>BitmapSource</returns>
-        public static BitmapSource CreateBitmapSourceFromBitmap(Bitmap bitmap)
+        public static BitmapSource CreateBitmapSourceFromBitmap(ref Bitmap bitmap)
         {
             if (bitmap == null)
                 throw new ArgumentNullException("bitmap");

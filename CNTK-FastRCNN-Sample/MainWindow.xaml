@@ -9,7 +9,7 @@
         WindowStartupLocation="Manual"
         NonActiveGlowBrush="#FFAEC9"
         GlowBrush="{DynamicResource AccentColorBrush}"
-        Title="CNTK-FastRCNN-Sample" Height="600" Width="800">
+        Title="CNTK-FastRCNN-Sample" Height="600" Width="800" Loaded="MetroWindow_Loaded">
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>
             <Button Name="button_Setting" ToolTip="" Click="button_Setting_Click">
@@ -42,9 +42,17 @@
             </Controls:Flyout>
         </Controls:FlyoutsControl>
     </Controls:MetroWindow.Flyouts>
-    
-    
-    <Grid>
-        <Image Name="Image_Show" />
+    <Window.Resources>
+        <RoutedCommand x:Key="NextImage" />
+    </Window.Resources>
+    <Window.InputBindings>
+        <KeyBinding Key="Space" Command="{StaticResource NextImage}" />
+    </Window.InputBindings>
+    <Window.CommandBindings>
+        <CommandBinding Command="{StaticResource NextImage}" CanExecute="NextImage_CommandBinding_CanExecute" Executed="NextImage_CommandBinding_Executed" />
+    </Window.CommandBindings>
+    <Grid Name="grid_Main">
+        <Image Name="Image_Show" Source="{Binding UIImage}"/>
+        <Controls:ProgressRing Name="progressRing_MainWindow" Foreground="{DynamicResource AccentColorBrush}" IsActive="{Binding progressRing_IsActive}" HorizontalAlignment="Center" VerticalAlignment="Center" />
     </Grid>
 </Controls:MetroWindow>
