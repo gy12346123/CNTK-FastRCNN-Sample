@@ -94,6 +94,43 @@ namespace CNTK_FastRCNN_Sample
             await new Func<System.Threading.Tasks.Task>(() => Task.Run(action)).Invoke();
             callback?.Invoke();
         }
+
+        /// <summary>
+        /// Read app setting from app.config
+        /// </summary>
+        /// <param name="keyword">Resource keyword</param>
+        /// <returns>Resource</returns>
+        public static string ReadAppSetting(string keyword)
+        {
+            return System.Configuration.ConfigurationManager.AppSettings[keyword];
+        }
+
+        /// <summary>
+        /// Set app setting to app.config
+        /// </summary>
+        /// <param name="keyword">Resource keyword</param>
+        /// <param name="value">Resource</param>
+        /// <param name="needReloadSetting">Reload Setting after set config</param>
+        /// <returns></returns>
+        public static bool WriteAppSetting(string keyword, string value, bool needReloadSetting = true)
+        {
+            try
+            {
+                System.Configuration.Configuration config = System.Configuration.ConfigurationManager.OpenExeConfiguration(System.Configuration.ConfigurationUserLevel.None);
+                config.AppSettings.Settings[keyword].Value = value;
+                config.Save();
+                if (needReloadSetting)
+                {
+                    Setting.Reload();
+                }
+                config = null;
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
     }
 
     /// <summary>

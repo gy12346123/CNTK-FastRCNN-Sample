@@ -9,7 +9,7 @@
         WindowStartupLocation="Manual"
         NonActiveGlowBrush="#FFAEC9"
         GlowBrush="{DynamicResource AccentColorBrush}"
-        Title="CNTK-FastRCNN-Sample" Height="600" Width="800" Loaded="MetroWindow_Loaded">
+        Title="CNTK-FastRCNN-Sample" Height="700" Width="800" Loaded="MetroWindow_Loaded">
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>
             <Button Name="button_Setting" ToolTip="" Click="button_Setting_Click">
@@ -33,10 +33,11 @@
             <Controls:Flyout Header="Setting" Position="Right" Width="400" Theme="Inverse">
                 <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto" >
                     <StackPanel>
-                        <TextBlock Text="Image load from" FontSize="20" FontWeight="Bold" Margin="10" />
-                        <RadioButton Name="radioButton_Local" GroupName="1" Content="Local" FontSize="15" HorizontalAlignment="Left" Margin="100,0,0,0" IsChecked="True" Click="radioButton_Local_Click" />
-                        <RadioButton Name="radioButton_Net" GroupName="1" Content="Net" FontSize="15" HorizontalAlignment="Left" Margin="250,-20,0,0" Click="radioButton_Net_Click" />
+                        <TextBlock Text="Image load from" FontSize="15" FontWeight="Bold" Margin="10" />
+                        <RadioButton Name="radioButton_Local" GroupName="1" Content="Local" HorizontalAlignment="Left" Margin="100,0,0,0" IsChecked="True" Click="radioButton_Local_Click" />
+                        <RadioButton Name="radioButton_Net" GroupName="1" Content="Net" HorizontalAlignment="Left" Margin="250,-20,0,0" Click="radioButton_Net_Click" />
                         <Button Name="button_LoadLocalFile" Content="LoadFile" Height="25" Width="70" HorizontalAlignment="Left" Margin="100,10,0,0" IsEnabled="True" Style="{StaticResource AccentedSquareButtonStyle}" Click="button_LoadLocalFile_Click" />
+                        <Controls:ToggleSwitch Name="toggleSwitch_AutoSkipImage" Header="AutoSkip" Margin="10" IsChecked="True" IsCheckedChanged="toggleSwitch_AutoSkipImage_IsCheckedChanged" />
                     </StackPanel>
                 </ScrollViewer>
             </Controls:Flyout>
@@ -46,15 +47,26 @@
         <RoutedCommand x:Key="NextImage" />
     </Window.Resources>
     <Window.InputBindings>
-        <KeyBinding Key="Space" Command="{StaticResource NextImage}" />
+        <KeyBinding Key="N" Command="{StaticResource NextImage}" />
     </Window.InputBindings>
     <Window.CommandBindings>
         <CommandBinding Command="{StaticResource NextImage}" CanExecute="NextImage_CommandBinding_CanExecute" Executed="NextImage_CommandBinding_Executed" />
     </Window.CommandBindings>
+
     <Grid Name="grid_Main">
-        <Image Name="Image_Show" Source="{Binding UIImage}" HorizontalAlignment="Left" VerticalAlignment="Top" MouseMove="Image_Show_MouseMove"/>
-        <Image Name="Image_MouseFocus" Source="{Binding MouseFocusImage}" HorizontalAlignment="Left" VerticalAlignment="Top" MouseMove="Image_MouseFocus_MouseMove" MouseLeftButtonDown="Image_MouseFocus_MouseLeftButtonDown" MouseLeftButtonUp="Image_MouseFocus_MouseLeftButtonUp" />
-        <TextBlock Name="textBlock_Message" Text="{Binding TextMessage}" FontSize="15" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
-        <Controls:ProgressRing Name="progressRing_MainWindow" Foreground="{DynamicResource AccentColorBrush}" IsActive="{Binding progressRing_IsActive}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="80"></RowDefinition>
+            <RowDefinition Height="20"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Image Name="Image_Show" Grid.Row="0" Source="{Binding UIImage}" HorizontalAlignment="Left" VerticalAlignment="Top" MouseMove="Image_Show_MouseMove"/>
+        <Image Name="Image_Bbox" Grid.Row="0" Source="{Binding BboxImage}" HorizontalAlignment="Left" VerticalAlignment="Top" />
+        <Image Name="Image_MouseFocus" Grid.Row="0" Source="{Binding MouseFocusImage}" Visibility="{Binding MouseFocusImageVisibility}" HorizontalAlignment="Left" VerticalAlignment="Top" MouseMove="Image_MouseFocus_MouseMove" MouseLeftButtonDown="Image_MouseFocus_MouseLeftButtonDown" MouseLeftButtonUp="Image_MouseFocus_MouseLeftButtonUp" MouseRightButtonDown="Image_MouseFocus_MouseRightButtonDown" />
+        <Viewbox Name="viewBox_Button" Grid.Row="1" >
+            <WrapPanel Name="wrapPanel_Button" Visibility="{Binding WarpPanel_ButtonVisibility}"></WrapPanel>
+        </Viewbox>
+        <TextBlock Name="textBlock_Message" Grid.Row="2" Text="{Binding TextMessage}" FontSize="15" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
+        <TextBlock Name="textBlock_Statistics" Grid.Row="2" Text="{Binding LastCount,StringFormat='Last: {0}'}" FontSize="15" HorizontalAlignment="Right" VerticalAlignment="Bottom" />
+        <Controls:ProgressRing Name="progressRing_MainWindow" Grid.RowSpan="3" Foreground="{DynamicResource AccentColorBrush}" IsActive="{Binding progressRing_IsActive}" HorizontalAlignment="Center" VerticalAlignment="Center" />
     </Grid>
 </Controls:MetroWindow>

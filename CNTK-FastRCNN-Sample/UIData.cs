@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -49,6 +50,42 @@ namespace CNTK_FastRCNN_Sample
             }
         }
 
+        private Visibility _MouseFocusImageVisibility = Visibility.Visible;
+
+        public Visibility MouseFocusImageVisibility
+        {
+            get { return _MouseFocusImageVisibility; }
+            set
+            {
+                if (_MouseFocusImageVisibility != value)
+                {
+                    _MouseFocusImageVisibility = value;
+                    if (PropertyChanged != null)
+                    {
+                        PropertyChanged(this, new PropertyChangedEventArgs("MouseFocusImageVisibility"));
+                    }
+                }
+            }
+        }
+
+        private ImageSource _BboxImage;
+
+        public ImageSource BboxImage
+        {
+            get { return _BboxImage; }
+            set
+            {
+                if (_BboxImage != value)
+                {
+                    _BboxImage = value;
+                    if (PropertyChanged != null)
+                    {
+                        PropertyChanged(this, new PropertyChangedEventArgs("BboxImage"));
+                    }
+                }
+            }
+        }
+
         private bool _progressRing_IsActive = false;
 
         public bool progressRing_IsActive
@@ -80,6 +117,42 @@ namespace CNTK_FastRCNN_Sample
                     if (PropertyChanged != null)
                     {
                         PropertyChanged(this, new PropertyChangedEventArgs("TextMessage"));
+                    }
+                }
+            }
+        }
+
+        private Visibility _WarpPanel_ButtonVisibility = Visibility.Hidden;
+
+        public Visibility WarpPanel_ButtonVisibility
+        {
+            get { return _WarpPanel_ButtonVisibility; }
+            set
+            {
+                if (_WarpPanel_ButtonVisibility != value)
+                {
+                    _WarpPanel_ButtonVisibility = value;
+                    if (PropertyChanged != null)
+                    {
+                        PropertyChanged(this, new PropertyChangedEventArgs("WarpPanel_ButtonVisibility"));
+                    }
+                }
+            }
+        }
+
+        private int _LastCount;
+
+        public int LastCount
+        {
+            get { return _LastCount; }
+            set
+            {
+                if (_LastCount != value)
+                {
+                    _LastCount = value;
+                    if (PropertyChanged != null)
+                    {
+                        PropertyChanged(this, new PropertyChangedEventArgs("LastCount"));
                     }
                 }
             }
