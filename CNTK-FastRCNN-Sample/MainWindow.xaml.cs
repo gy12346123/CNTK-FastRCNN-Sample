@@ -119,6 +119,10 @@ namespace CNTK_FastRCNN_Sample
         /// </summary>
         private AutoResetEvent autoResetEvent;
 
+        private double imageWidthNow;
+
+        private double imageHeightNow;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -470,11 +474,12 @@ namespace CNTK_FastRCNN_Sample
         {
             using (StreamWriter SW = new StreamWriter(new FileStream(filePath, FileMode.CreateNew)))
             {
-                double rate = uiData.UIImage.Width / Image_Show.ActualWidth;
+                double widthRate = uiData.UIImage.PixelWidth / Image_Show.ActualWidth;
+                double heightRate = uiData.UIImage.PixelHeight / Image_Show.ActualHeight;
                 foreach (Rect rect in list)
                 {
                     //SW.WriteLine(rect.TopLeft.X + @"	" + rect.TopLeft.Y + @"	" + rect.BottomRight.X + @"	" + rect.BottomRight.Y);
-                    SW.WriteLine(Convert.ToInt32(rect.TopLeft.X * rate) + @"	" + Convert.ToInt32(rect.TopLeft.Y * rate) + @"	" + Convert.ToInt32(rect.BottomRight.X * rate) + @"	" + Convert.ToInt32(rect.BottomRight.Y * rate));
+                    SW.WriteLine(Convert.ToInt32(rect.TopLeft.X * widthRate) + @"	" + Convert.ToInt32(rect.TopLeft.Y * heightRate) + @"	" + Convert.ToInt32(rect.BottomRight.X * widthRate) + @"	" + Convert.ToInt32(rect.BottomRight.Y * heightRate));
                 }
             }
         }
@@ -532,6 +537,25 @@ namespace CNTK_FastRCNN_Sample
             {
                 flag_AutoSkipImage = false;
             }
+        }
+
+        private void Image_Show_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            // Bbox resize
+            if (BboxList != null && BboxList.Count() > 0)
+            {
+                List<Rect> tempList = new List<Rect>();
+                foreach (Rect rect in BboxList)
+                {
+                    tempList.Add(new Rect(Convert.ToInt32(rect.X * Image_Show.ActualWidth / imageWidthNow), Convert.ToInt32(rect.Y * Image_Show.ActualHeight / imageHeightNow), Convert.ToInt32(rect.Width * Image_Show.ActualWidth / imageWidthNow), Convert.ToInt32(rect.Height * Image_Show.ActualHeight / imageHeightNow)));
+                }
+                BboxList = tempList;
+                UIImageActualRect = new Rect(0, 0, Image_Show.ActualWidth, Image_Show.ActualHeight);
+                DrawBbox(ref BboxGD, ref BboxList, ref BboxPen, ref drawingBboxNoticePen);
+            }
+
+            imageWidthNow = Image_Show.ActualWidth;
+            imageHeightNow = Image_Show.ActualHeight;
         }
     }
 }
