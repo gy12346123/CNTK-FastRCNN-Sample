@@ -24,46 +24,100 @@ namespace CNTK_FastRCNN_Sample
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
+        /// <summary>
+        /// Image file path
+        /// </summary>
         private string localImagePath;
 
+        /// <summary>
+        /// Image file path list
+        /// </summary>
         private List<string> localImageFile;
 
+        /// <summary>
+        /// UI bingding data
+        /// </summary>
         public UIData uiData;
 
+        /// <summary>
+        /// Drawing group for Image_MouseFocus
+        /// </summary>
         private DrawingGroup mouseFocusGD;
 
+        /// <summary>
+        /// Drawing group for Image_Bbox
+        /// </summary>
         private DrawingGroup BboxGD;
 
+        /// <summary>
+        /// Draw mouse focus line
+        /// </summary>
         private Pen mouseFocusPen = new Pen(Brushes.MediumVioletRed, 2d);
 
+        /// <summary>
+        /// Bounding box line
+        /// </summary>
         private Pen BboxPen = new Pen(Brushes.Green,2d);
 
-        private Pen drawingBboxNoticePen = new Pen(Brushes.Red, 0d);
-
-        private Rect UIImageActualRect;
-
-        private Point startPoint;
-
-        private Point EndPoint;
-
-        private bool flag_DrawBbox = false;
-
-        private bool flag_AutoSkipImage = true;
-
-        private List<Rect> BboxList;
-
-        private string filePathNowLoaded;
-
-        private List<string> labelList;
-
-        private List<string> labelSelectedList;
-
-        private AutoResetEvent autoResetEvent;
+        /// <summary>
+        /// Bouding box line for choose label
+        /// </summary>
+        private Pen BboxLabelPen = new Pen(Brushes.MediumVioletRed, 4d);
 
         /// <summary>
-        /// 1:Draw bounding box, 2:Choose label, 3:Next image
+        /// thickness 0
         /// </summary>
-        //private int step = 1;
+        private Pen drawingBboxNoticePen = new Pen(Brushes.Red, 0d);
+
+        /// <summary>
+        /// UIImage actual rect
+        /// </summary>
+        private Rect UIImageActualRect;
+
+        /// <summary>
+        /// Bbox start point
+        /// </summary>
+        private Point startPoint;
+
+        /// <summary>
+        /// Bbox end point
+        /// </summary>
+        private Point EndPoint;
+
+        /// <summary>
+        /// Draw Bbox flag
+        /// </summary>
+        private bool flag_DrawBbox = false;
+
+        /// <summary>
+        /// Auto skip image flag
+        /// </summary>
+        private bool flag_AutoSkipImage = true;
+
+        /// <summary>
+        /// Bbox rect list
+        /// </summary>
+        private List<Rect> BboxList;
+
+        /// <summary>
+        /// File path now loaded
+        /// </summary>
+        private string filePathNowLoaded;
+
+        /// <summary>
+        /// Raad labels from App.config
+        /// </summary>
+        private List<string> labelList;
+
+        /// <summary>
+        /// Labels which user selected
+        /// </summary>
+        private List<string> labelSelectedList;
+
+        /// <summary>
+        /// Thread reset event
+        /// </summary>
+        private AutoResetEvent autoResetEvent;
 
         public MainWindow()
         {
@@ -434,7 +488,7 @@ namespace CNTK_FastRCNN_Sample
             {
                 List<Rect> tempList = new List<Rect>() { rect };
                 //DrawBbox(ref BboxGD, ref tempList, ref mouseFocusPen, ref drawingBboxNoticePen);
-                CallDrawBbox_Delegate(ref BboxGD, ref tempList, ref mouseFocusPen, ref drawingBboxNoticePen);
+                CallDrawBbox_Delegate(ref BboxGD, ref tempList, ref BboxLabelPen, ref drawingBboxNoticePen);
                 autoResetEvent.WaitOne();
             }
 
