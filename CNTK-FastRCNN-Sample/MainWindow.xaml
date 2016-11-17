@@ -12,7 +12,7 @@
         Title="CNTK-FastRCNN-Sample" Height="700" Width="800" Loaded="MetroWindow_Loaded">
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>
-            <Button Name="button_Setting" ToolTip="" Click="button_Setting_Click">
+            <Button Name="button_Setting" ToolTip="Set it and get start." Click="button_Setting_Click">
                 <StackPanel Orientation="Horizontal">
                     <Rectangle Width="17"
                     Height="17"
@@ -34,10 +34,17 @@
                 <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto" >
                     <StackPanel>
                         <TextBlock Text="Image load from" FontSize="15" FontWeight="Bold" Margin="10" />
-                        <RadioButton Name="radioButton_Local" GroupName="1" Content="Local" HorizontalAlignment="Left" Margin="100,0,0,0" IsChecked="True" Click="radioButton_Local_Click" />
-                        <RadioButton Name="radioButton_Net" GroupName="1" Content="Net" HorizontalAlignment="Left" Margin="250,-20,0,0" Click="radioButton_Net_Click" />
-                        <Button Name="button_LoadLocalFile" Content="LoadFile" Height="25" Width="70" HorizontalAlignment="Left" Margin="100,10,0,0" IsEnabled="True" Style="{StaticResource AccentedSquareButtonStyle}" Click="button_LoadLocalFile_Click" />
-                        <Controls:ToggleSwitch Name="toggleSwitch_AutoSkipImage" Header="AutoSkip" Margin="10" IsChecked="True" IsCheckedChanged="toggleSwitch_AutoSkipImage_IsCheckedChanged" />
+                        <RadioButton Name="radioButton_Local" GroupName="1" Content="Local" HorizontalAlignment="Left" Margin="100,0,0,0" IsChecked="True" ToolTip="Load images form local." Click="radioButton_Local_Click" />
+                        <RadioButton Name="radioButton_Net" GroupName="1" Content="Net" HorizontalAlignment="Left" Margin="250,-20,0,0" ToolTip="Load images from net,not finish." Click="radioButton_Net_Click" />
+                        <Button Name="button_LoadLocalFile" Content="LoadFile" Height="25" Width="70" HorizontalAlignment="Left" Margin="100,10,0,0" IsEnabled="True" Style="{StaticResource AccentedSquareButtonStyle}" ToolTip="Select image file folder." Click="button_LoadLocalFile_Click" />
+                        <TextBlock Text="Image filter" FontSize="15" FontWeight="Bold" Margin="10" />
+                        <WrapPanel Margin="100,0,0,0" HorizontalAlignment="Left">
+                            <CheckBox Name="checkBox_jpg" Content="jpg" IsChecked="{Binding JPGFilter}" />
+                            <CheckBox Name="checkBox_png" Content="png" IsChecked="{Binding PNGFilter}" Margin="30,0,0,0"/>
+                            <CheckBox Name="checkBox_bmp" Content="bmp" IsChecked="{Binding BMPFilter}" Margin="30,0,0,0"/>
+                        </WrapPanel>
+                        
+                        <Controls:ToggleSwitch Name="toggleSwitch_AutoSkipImage" Header="AutoSkip" Margin="10" IsChecked="True" ToolTip="Skip images which marked." IsCheckedChanged="toggleSwitch_AutoSkipImage_IsCheckedChanged" />
                     </StackPanel>
                 </ScrollViewer>
             </Controls:Flyout>
@@ -45,12 +52,18 @@
     </Controls:MetroWindow.Flyouts>
     <Window.Resources>
         <RoutedCommand x:Key="NextImage" />
+        <RoutedCommand x:Key="RemovePreBbox" />
+        <RoutedCommand x:Key="SkipImage" />
     </Window.Resources>
     <Window.InputBindings>
         <KeyBinding Key="N" Command="{StaticResource NextImage}" />
+        <KeyBinding Key="U" Command="{StaticResource RemovePreBbox}" />
+        <KeyBinding Key="S" Command="{StaticResource SkipImage}" />
     </Window.InputBindings>
     <Window.CommandBindings>
         <CommandBinding Command="{StaticResource NextImage}" CanExecute="NextImage_CommandBinding_CanExecute" Executed="NextImage_CommandBinding_Executed" />
+        <CommandBinding Command="{StaticResource RemovePreBbox}" CanExecute="RemovePreBbox_CommandBinding_CanExecute" Executed="RemovePreBbox_CommandBinding_Executed" />
+        <CommandBinding Command="{StaticResource SkipImage}" CanExecute="SkipImage_CommandBinding_CanExecute" Executed="SkipImage_CommandBinding_Executed" />
     </Window.CommandBindings>
 
     <Grid Name="grid_Main">

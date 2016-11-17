@@ -157,5 +157,59 @@ namespace CNTK_FastRCNN_Sample
                 }
             }
         }
+
+        private bool _JPGFilter = true;
+
+        public bool JPGFilter
+        {
+            get { return _JPGFilter; }
+            set
+            {
+                if (_JPGFilter != value)
+                {
+                    _JPGFilter = value;
+                    if (PropertyChanged != null)
+                    {
+                        PropertyChanged(this, new PropertyChangedEventArgs("JPGFilter"));
+                    }
+                }
+            }
+        }
+
+        private bool _PNGFilter = false;
+
+        public bool PNGFilter
+        {
+            get { return _PNGFilter; }
+            set
+            {
+                if (_PNGFilter != value)
+                {
+                    _PNGFilter = value;
+                    if (PropertyChanged != null)
+                    {
+                        PropertyChanged(this, new PropertyChangedEventArgs("PNGFilter"));
+                    }
+                }
+            }
+        }
+
+        private bool _BMPFilter = false;
+
+        public bool BMPFilter
+        {
+            get { return _BMPFilter; }
+            set
+            {
+                if (_BMPFilter != value)
+                {
+                    _BMPFilter = value;
+                    if (PropertyChanged != null)
+                    {
+                        PropertyChanged(this, new PropertyChangedEventArgs("BMPFilter"));
+                    }
+                }
+            }
+        }
     }
 }

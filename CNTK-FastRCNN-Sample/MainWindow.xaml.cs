@@ -119,8 +119,14 @@ namespace CNTK_FastRCNN_Sample
         /// </summary>
         private AutoResetEvent autoResetEvent;
 
+        /// <summary>
+        /// Image width now loaded
+        /// </summary>
         private double imageWidthNow;
 
+        /// <summary>
+        /// Image height now loaded
+        /// </summary>
         private double imageHeightNow;
 
         public MainWindow()
@@ -131,41 +137,29 @@ namespace CNTK_FastRCNN_Sample
 
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            // Data context
             grid_Main.DataContext = uiData;
+            flyoutsControl.DataContext = uiData;
 
+            // Get label setting form App.config and set label button
             SetLabelButton();
-
-
-            //Button[] button = new Button[2] {
-            //    new Button{
-            //        Content = "head",
-            //        Width = 50,
-            //        Height = 25},
-            //    new Button{
-            //        Content = "eye",
-            //        Width = 50,
-            //        Height = 25}
-            //};
-            //foreach (Button B in button)
-            //{
-            //    B.Click += button_Template_Click;
-            //    wrapPanel_Button.Children.Add(B);
-            //}
-
         }
 
         private void SetLabelButton()
         {
+            // Label missing
             if (Setting.labelSet == null || Setting.labelSet.Equals(""))
             {
                 this.ShowMessageAsync("Notice","Label has not found!");
                 return;
             }
+            // Get label
             labelList = new List<string>();
             foreach (string label in Setting.labelSet.Split('|'))
             {
                 labelList.Add(label);
             }
+            // Set label
             Button[] button = new Button[labelList.Count()];
             for (int i = 0; i < labelList.Count(); i++)
             {
@@ -180,12 +174,15 @@ namespace CNTK_FastRCNN_Sample
 
         private void button_Template_Click(object sender, RoutedEventArgs e)
         {
+            // Get button content(label) which user click
             Button b = (Button)sender;
             uiData.TextMessage = b.Content.ToString();
             if (labelSelectedList != null)
             {
+                // Save selected label to list
                 labelSelectedList.Add(b.Content.ToString());
             }
+            // Set event, the waiting thread now can go on
             autoResetEvent.Set();
         }
 
@@ -241,6 +238,7 @@ namespace CNTK_FastRCNN_Sample
 
         private void button_LoadLocalFile_Click(object sender, RoutedEventArgs e)
         {
+            // Get file folder
             string path = Tools.GetPath("Select image path",Environment.SpecialFolder.Desktop);
             if (path != null || Directory.Exists(path))
             {
@@ -250,6 +248,7 @@ namespace CNTK_FastRCNN_Sample
                 this.ShowMessageAsync("Notice","Image path not exist!");
                 return;
             }
+            // Get images file path and show it
             grid_Main.Visibility = Visibility.Visible;
             localImageFile = new List<string>();
             Task.Factory.StartNew(()=>{
@@ -259,6 +258,11 @@ namespace CNTK_FastRCNN_Sample
             ToggleFlyout(0);
         }
 
+        /// <summary>
+        /// Get image file path use filter from setting check box and save all path to ref fileList
+        /// </summary>
+        /// <param name="dir">File folder path</param>
+        /// <param name="fileList">File list</param>
         private void GetImageFile(string dir, ref List<string> fileList)
         {
             try
@@ -266,15 +270,25 @@ namespace CNTK_FastRCNN_Sample
                 uiData.progressRing_IsActive = true;
                 DirectoryInfo dirInfo = new DirectoryInfo(dir);
 
-                SearchFiles("*.jpg", ref dirInfo, ref fileList);
-                SearchFiles("*.png", ref dirInfo, ref fileList);
-                SearchFiles("*.bmp", ref dirInfo, ref fileList);
+                if (uiData.JPGFilter)
+                {
+                    SearchFiles("*.jpg", ref dirInfo, ref fileList);
+                }
+                if (uiData.PNGFilter)
+                {
+                    SearchFiles("*.png", ref dirInfo, ref fileList);
+                }
+                if (uiData.BMPFilter)
+                {
+                    SearchFiles("*.bmp", ref dirInfo, ref fileList);
+                }
+                
                 fileList.Sort();
                 uiData.LastCount = fileList.Count();
             }
             catch (Exception)
             {
-                this.ShowMessageAsync("Notice","Find image file error.");
+                uiData.TextMessage = "Find image file error.";
                 return;
             }finally
             {
@@ -282,6 +296,12 @@ namespace CNTK_FastRCNN_Sample
             }
         }
 
+        /// <summary>
+        /// Search file use filter and skip image which marked
+        /// </summary>
+        /// <param name="filter">Like:"*.jpg"</param>
+        /// <param name="dirInfo">DirectoryInfo used to search</param>
+        /// <param name="fileList">FileList used to save result</param>
         private void SearchFiles(string filter, ref DirectoryInfo dirInfo, ref List<string> fileList)
         {
             foreach (FileInfo fileInfo in dirInfo.GetFiles(filter))
@@ -301,6 +321,10 @@ namespace CNTK_FastRCNN_Sample
             }
         }
 
+        /// <summary>
+        /// Show image from fileList and remove the path which used
+        /// </summary>
+        /// <param name="fileList">Image file path</param>
         private void StartDrawBbox(ref List<string> fileList)
         {
             if (fileList.Count() > 0)
@@ -316,6 +340,10 @@ namespace CNTK_FastRCNN_Sample
             }
         }
 
+        /// <summary>
+        /// Show image on Mainwindow
+        /// </summary>
+        /// <param name="file">Image file path</param>
         private void ShowImage(string file)
         {
             uiData.progressRing_IsActive = true;
@@ -334,6 +362,9 @@ namespace CNTK_FastRCNN_Sample
             });
         }
 
+        /// <summary>
+        /// Reset other layout image when show next image
+        /// </summary>
         private void ResetOtherImage()
         {
             BboxList = new List<Rect>();
@@ -350,6 +381,10 @@ namespace CNTK_FastRCNN_Sample
             this.Dispatcher.Invoke(new ResetOtherImage_Delegate(ResetOtherImage));
         }
 
+        /// <summary>
+        /// Draw mouse focus line on mouseFocusGD
+        /// </summary>
+        /// <param name="point">Mouse point</param>
         private void DrawMouseFocus(ref Point point)
         {
             if (point.X > Image_Show.ActualWidth || point.Y > Image_Show.ActualHeight)
@@ -363,6 +398,14 @@ namespace CNTK_FastRCNN_Sample
             }
         }
 
+        /// <summary>
+        /// Draw bounding box on DrawingGroup
+        /// </summary>
+        /// <param name="DG">DrawingGroup which used to draw Bbox</param>
+        /// <param name="start">Rect first point</param>
+        /// <param name="end">Rect Second point</param>
+        /// <param name="focusPen">Rect pen</param>
+        /// <param name="noticePen">Notice pen</param>
         private void DrawBbox(ref DrawingGroup DG, ref Point start, ref Point end, ref Pen focusPen, ref Pen noticePen)
         {
             using (DrawingContext DC = DG.Open())
@@ -372,6 +415,13 @@ namespace CNTK_FastRCNN_Sample
             }
         }
 
+        /// <summary>
+        /// Draw bounding box on DrawingGroup
+        /// </summary>
+        /// <param name="DG">DrawingGroup which used to draw Bbox</param>
+        /// <param name="list">Rect list</param>
+        /// <param name="focusPen">Rect pen</param>
+        /// <param name="noticePen">Notice pen</param>
         private void DrawBbox(ref DrawingGroup DG, ref List<Rect> list, ref Pen focusPen, ref Pen noticePen)
         {
             if (list.Count() == 0)
@@ -470,10 +520,16 @@ namespace CNTK_FastRCNN_Sample
             }
         }
 
+        /// <summary>
+        /// Save bounding box data to filePath
+        /// </summary>
+        /// <param name="filePath">File path</param>
+        /// <param name="list">Bounding box list</param>
         private void SaveBboxes(string filePath, ref List<Rect> list)
         {
             using (StreamWriter SW = new StreamWriter(new FileStream(filePath, FileMode.CreateNew)))
             {
+                // Convert Bbox size to real image size
                 double widthRate = uiData.UIImage.PixelWidth / Image_Show.ActualWidth;
                 double heightRate = uiData.UIImage.PixelHeight / Image_Show.ActualHeight;
                 foreach (Rect rect in list)
@@ -484,6 +540,11 @@ namespace CNTK_FastRCNN_Sample
             }
         }
 
+        /// <summary>
+        /// Choose labels and save them
+        /// </summary>
+        /// <param name="filePath">File path</param>
+        /// <param name="list">Bounding box list</param>
         private void ChooseAndSaveLabels(string filePath, List<Rect> list)
         {
             uiData.TextMessage = "Choose label..";
@@ -492,11 +553,12 @@ namespace CNTK_FastRCNN_Sample
             foreach (Rect rect in list)
             {
                 List<Rect> tempList = new List<Rect>() { rect };
-                //DrawBbox(ref BboxGD, ref tempList, ref mouseFocusPen, ref drawingBboxNoticePen);
+                // Draw a Bbox
                 CallDrawBbox_Delegate(ref BboxGD, ref tempList, ref BboxLabelPen, ref drawingBboxNoticePen);
+                // Wait user select
                 autoResetEvent.WaitOne();
             }
-
+            // Save labels
             if (list.Count() == labelSelectedList.Count())
             {
                 using (StreamWriter SW = new StreamWriter(new FileStream(filePath,FileMode.CreateNew)))
@@ -510,6 +572,9 @@ namespace CNTK_FastRCNN_Sample
             }
         }
 
+        /// <summary>
+        /// Load next image after save all data
+        /// </summary>
         private void Thread_NextImage()
         {
             uiData.MouseFocusImageVisibility = Visibility.Hidden;
@@ -556,6 +621,41 @@ namespace CNTK_FastRCNN_Sample
 
             imageWidthNow = Image_Show.ActualWidth;
             imageHeightNow = Image_Show.ActualHeight;
+        }
+
+        private void RemovePreBbox_CommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            if (BboxList != null && BboxList.Count() >0 && !flag_DrawBbox)
+            {
+                e.CanExecute = true;
+            }else
+            {
+                e.CanExecute = false;
+            }
+        }
+
+        private void RemovePreBbox_CommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            BboxList.RemoveAt(BboxList.Count() - 1);
+            DrawBbox(ref BboxGD, ref BboxList, ref BboxPen, ref drawingBboxNoticePen);
+        }
+
+        private void SkipImage_CommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            if (localImageFile.Count() > 0)
+            {
+                e.CanExecute = true;
+            }
+            else
+            {
+                e.CanExecute = false;
+                this.ShowMessageAsync("Notice", "All image has been drawed.");
+            }
+        }
+
+        private void SkipImage_CommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            StartDrawBbox(ref localImageFile);
         }
     }
 }
