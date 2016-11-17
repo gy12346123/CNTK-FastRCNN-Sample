@@ -74,7 +74,7 @@
         </Grid.RowDefinitions>
         <Image Name="Image_Show" Grid.Row="0" Source="{Binding UIImage}" HorizontalAlignment="Left" VerticalAlignment="Top" MouseMove="Image_Show_MouseMove" SizeChanged="Image_Show_SizeChanged" />
         <Image Name="Image_Bbox" Grid.Row="0" Source="{Binding BboxImage}" HorizontalAlignment="Left" VerticalAlignment="Top" />
-        <Image Name="Image_MouseFocus" Grid.Row="0" Source="{Binding MouseFocusImage}" Visibility="{Binding MouseFocusImageVisibility}" HorizontalAlignment="Left" VerticalAlignment="Top" MouseMove="Image_MouseFocus_MouseMove" MouseLeftButtonDown="Image_MouseFocus_MouseLeftButtonDown" MouseLeftButtonUp="Image_MouseFocus_MouseLeftButtonUp" MouseRightButtonDown="Image_MouseFocus_MouseRightButtonDown" />
+        <Image Name="Image_MouseFocus" Grid.Row="0" Source="{Binding MouseFocusImage}" Visibility="{Binding MouseFocusImageVisibility}" HorizontalAlignment="Left" VerticalAlignment="Top" MouseMove="Image_MouseFocus_MouseMove" MouseLeftButtonDown="Image_MouseFocus_MouseLeftButtonDown" MouseLeftButtonUp="Image_MouseFocus_MouseLeftButtonUp" MouseRightButtonDown="Image_MouseFocus_MouseRightButtonDown" Cursor="Cross" />
         <Viewbox Name="viewBox_Button" Grid.Row="1" >
             <WrapPanel Name="wrapPanel_Button" Visibility="{Binding WarpPanel_ButtonVisibility}"></WrapPanel>
         </Viewbox>
