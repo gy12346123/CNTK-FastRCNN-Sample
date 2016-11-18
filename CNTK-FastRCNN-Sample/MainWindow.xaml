@@ -93,8 +93,8 @@
         <Viewbox Name="viewBox_Button" Grid.Row="1" >
             <WrapPanel Name="wrapPanel_Button" Visibility="{Binding WarpPanel_ButtonVisibility}"></WrapPanel>
         </Viewbox>
-        <TextBlock Name="textBlock_Message" Grid.Row="2" Text="{Binding TextMessage}" FontSize="15" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
-        <TextBlock Name="textBlock_Statistics" Grid.Row="2" Text="{Binding LastCount,StringFormat='Last: {0}'}" FontSize="15" HorizontalAlignment="Right" VerticalAlignment="Bottom" />
+        <TextBlock Name="textBlock_Message" Grid.Row="2" Text="{Binding TextMessage}" FontSize="15" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="2" />
+        <TextBlock Name="textBlock_Statistics" Grid.Row="2" Text="{Binding LastCount,StringFormat='Last: {0}'}" FontSize="15" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="2" />
         <Controls:ProgressRing Name="progressRing_MainWindow" Grid.RowSpan="3" Foreground="{DynamicResource AccentColorBrush}" IsActive="{Binding progressRing_IsActive}" HorizontalAlignment="Center" VerticalAlignment="Center" />
     </Grid>
 </Controls:MetroWindow>
