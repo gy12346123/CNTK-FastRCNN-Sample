@@ -54,16 +54,31 @@
         <RoutedCommand x:Key="NextImage" />
         <RoutedCommand x:Key="RemovePreBbox" />
         <RoutedCommand x:Key="SkipImage" />
+        <RoutedCommand x:Key="ReSetLabel" />
+        <RoutedCommand x:Key="LabelButtons" />
     </Window.Resources>
     <Window.InputBindings>
         <KeyBinding Key="N" Command="{StaticResource NextImage}" />
         <KeyBinding Key="U" Command="{StaticResource RemovePreBbox}" />
         <KeyBinding Key="S" Command="{StaticResource SkipImage}" />
+        <KeyBinding Key="R" Command="{StaticResource ReSetLabel}" />
+        <KeyBinding Gesture="Alt+1" CommandParameter="0" Command="{StaticResource LabelButtons}" />
+        <KeyBinding Gesture="Alt+2" CommandParameter="1" Command="{StaticResource LabelButtons}" />
+        <KeyBinding Gesture="Alt+3" CommandParameter="2" Command="{StaticResource LabelButtons}" />
+        <KeyBinding Gesture="Alt+4" CommandParameter="3" Command="{StaticResource LabelButtons}" />
+        <KeyBinding Gesture="Alt+5" CommandParameter="4" Command="{StaticResource LabelButtons}" />
+        <KeyBinding Gesture="Alt+6" CommandParameter="5" Command="{StaticResource LabelButtons}" />
+        <KeyBinding Gesture="Alt+7" CommandParameter="6" Command="{StaticResource LabelButtons}" />
+        <KeyBinding Gesture="Alt+8" CommandParameter="7" Command="{StaticResource LabelButtons}" />
+        <KeyBinding Gesture="Alt+9" CommandParameter="8" Command="{StaticResource LabelButtons}" />
+        <KeyBinding Gesture="Alt+0" CommandParameter="9" Command="{StaticResource LabelButtons}" />
     </Window.InputBindings>
     <Window.CommandBindings>
         <CommandBinding Command="{StaticResource NextImage}" CanExecute="NextImage_CommandBinding_CanExecute" Executed="NextImage_CommandBinding_Executed" />
         <CommandBinding Command="{StaticResource RemovePreBbox}" CanExecute="RemovePreBbox_CommandBinding_CanExecute" Executed="RemovePreBbox_CommandBinding_Executed" />
         <CommandBinding Command="{StaticResource SkipImage}" CanExecute="SkipImage_CommandBinding_CanExecute" Executed="SkipImage_CommandBinding_Executed" />
+        <CommandBinding Command="{StaticResource ReSetLabel}" CanExecute="ReSetLabel_CommandBinding_CanExecute" Executed="ReSetLabel_CommandBinding_Executed" />
+        <CommandBinding Command="{StaticResource LabelButtons}" CanExecute="LabelButtons_CommandBinding_CanExecute" Executed="LabelButtons_CommandBinding_Executed" />
     </Window.CommandBindings>
 
     <Grid Name="grid_Main">

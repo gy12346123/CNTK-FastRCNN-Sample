@@ -129,6 +129,11 @@ namespace CNTK_FastRCNN_Sample
         /// </summary>
         private double imageHeightNow;
 
+        /// <summary>
+        /// Thread for next image
+        /// </summary>
+        private Thread thread_NextImage;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -468,7 +473,9 @@ namespace CNTK_FastRCNN_Sample
                 return;
             }
 
-            new Thread(new ThreadStart(Thread_NextImage)).Start();
+            thread_NextImage = new Thread(new ThreadStart(Thread_NextImage));
+            thread_NextImage.IsBackground = true;
+            thread_NextImage.Start();
         }
 
         private void Image_Show_MouseMove(object sender, MouseEventArgs e)
@@ -527,7 +534,7 @@ namespace CNTK_FastRCNN_Sample
         /// <param name="list">Bounding box list</param>
         private void SaveBboxes(string filePath, ref List<Rect> list)
         {
-            using (StreamWriter SW = new StreamWriter(new FileStream(filePath, FileMode.CreateNew)))
+            using (StreamWriter SW = new StreamWriter(new FileStream(filePath, FileMode.Create)))
             {
                 // Convert Bbox size to real image size
                 double widthRate = uiData.UIImage.PixelWidth / Image_Show.ActualWidth;
@@ -549,6 +556,10 @@ namespace CNTK_FastRCNN_Sample
         {
             uiData.TextMessage = "Choose label..";
             labelSelectedList = new List<string>();
+            if (autoResetEvent != null)
+            {
+                autoResetEvent.Dispose();
+            }
             autoResetEvent = new AutoResetEvent(false);
             foreach (Rect rect in list)
             {
@@ -656,6 +667,59 @@ namespace CNTK_FastRCNN_Sample
         private void SkipImage_CommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             StartDrawBbox(ref localImageFile);
+        }
+
+        private void ReSetLabel_CommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            if (labelSelectedList != null && labelSelectedList.Count() >0)
+            {
+                e.CanExecute = true;
+            }else
+            {
+                e.CanExecute = false;
+            }
+        }
+
+        private void ReSetLabel_CommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (thread_NextImage != null)
+            {
+                thread_NextImage.Abort();
+            }
+            thread_NextImage = new Thread(new ThreadStart(Thread_NextImage));
+            thread_NextImage.IsBackground = true;
+            thread_NextImage.Start();
+        }
+
+        private void LabelButtons_CommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            if (labelSelectedList != null && thread_NextImage != null && thread_NextImage.IsAlive)
+            {
+                e.CanExecute = true;
+            }
+            else
+            {
+                e.CanExecute = false;
+            }
+        }
+
+        private void LabelButtons_CommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            var buttons = wrapPanel_Button.Children;
+            if (Convert.ToInt32(e.Parameter) >= buttons.Count)
+            {
+                return;
+            }
+            Button b = buttons[Convert.ToInt32(e.Parameter)] as Button;
+            uiData.TextMessage = b.Content.ToString();
+            if (labelSelectedList != null)
+            {
+                // Save selected label to list
+                labelSelectedList.Add(b.Content.ToString());
+            }
+            // Set event, the waiting thread now can go on
+            autoResetEvent.Set();
+            //this.ShowMessageAsync("test", b.Content.ToString());
         }
     }
 }
